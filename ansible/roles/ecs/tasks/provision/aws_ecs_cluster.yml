@@ -1,0 +1,58 @@
+---
+
+- include_vars: /vagrant/workspace/ansible/aws_networking.yml
+  ignore_errors: yes
+
+- name: Generating main.tf for aws_ecs_cluster
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_ecs_cluster/main.j2
+    dest: /terraform/projects/aws_ecs_cluster/main.tf
+  tags:
+    - role_ecs_ecs_cluster
+    - role_ecs_generate_tfs
+
+- name: Generating output.tf for aws_ecs_cluster
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_ecs_cluster/output.j2
+    dest: /terraform/projects/aws_ecs_cluster/output.tf
+  tags:
+    - role_ecs_ecs_cluster
+    - role_ecs_generate_tfs
+
+- name: Generating variables.tf for aws_ecs_cluster
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_ecs_cluster/variables.j2
+    dest: /terraform/projects/aws_ecs_cluster/variables.tf
+  tags:
+    - role_ecs_ecs_cluster
+    - role_ecs_generate_tfs
+
+- name: Generating variables.tfvars for aws_ecs_cluster
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_ecs_cluster/variables.tfvars.j2
+    dest: /terraform/projects/aws_ecs_cluster/variables.tfvars
+  tags:
+    - role_ecs_ecs_cluster
+    - role_ecs_generate_tfs
+
+- name: "Provision AWS ecs_cluster"
+  terraform:
+    force_init: yes
+    project_path: /terraform/projects/aws_ecs_cluster
+    variables_file: variables.tfvars
+    state: present
+  environment: "{{ aws_credentials }}"
+  register: outs_aws_ecs_cluster
+  tags:
+     - role_ecs_terraform_ecs_cluster
+     - role_ecs_apply_terraform
+
+- name: Saving status in the Vagrant Workspace
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/varfiles/aws_ecs_cluster.j2
+    dest: /vagrant/workspace/ansible/aws_ecs_cluster.yml
+  tags:
+    - role_ecs_terraform_ecs_cluster
+    - role_ecs_apply_terraform
+
+...

@@ -1,0 +1,10 @@
+---
+
+- name: Create Docker Network
+  docker_network:
+   name: amonfa-network
+   driver_options:
+     com.docker.network.bridge.name: amonfa-net
+   state: absent
+
+...

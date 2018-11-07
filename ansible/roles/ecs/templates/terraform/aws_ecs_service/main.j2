@@ -1,0 +1,53 @@
+terraform {
+  backend "s3" {
+    bucket = "z-tfstates"
+    key    = "aws_ecs_service/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "z-tfstates"
+    key    = "aws_ecs_service/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+module "some-ecs-service"   {
+  source = "../../modules/ecs-service-alb"
+
+  project_name                = "${var.name}"
+  environment                 = "${var.env}"
+
+  ecs_cluster_name            = "${var.cluster_name}"
+  ecs_service_role            = "${var.ecs_service_role}"
+  ecs_service_autoscale       = "${var.ecs_service_autoscale}"
+  task_role_arn               = "${var.task_role_arn}"
+  ecs_container_definitions   = "task-definition.json"
+
+  ecs_container_name          = "banhmi"
+  ecs_container_port          = 8080
+
+  ecs_app_min_capacity        = 1
+  ecs_app_max_capacity        = 20
+
+  ecs_cpu_app_pol_scale_up_scaling_adjustment       = 1
+  ecs_mem_app_pol_scale_up_scaling_adjustment       = 2
+
+  cloudwatch_metric_alarm_app_cpu_high_threshold    = 60
+  cloudwatch_metric_alarm_app_cpu_low_threshold     = 20
+
+  cloudwatch_metric_alarm_app_memory_high_threshold = 70
+  cloudwatch_metric_alarm_app_memory_low_threshold  = 35
+
+  alb_subnets                 = "${var.alb_subnets}"
+  alb_internal                = false
+  alb_sgs                     = ["${var.alb_sg}"]
+  tg_vpc                      = "${var.tg_vpc_id}"
+  tg_port                     = 8080
+  tg_path                     = "/status/healthcheck"
+  tg_hc_interval              = 30
+  alb_listeners               = [ 80 ]
+}

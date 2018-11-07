@@ -1,0 +1,11 @@
+output "vpc_id" {
+  value = "${module.network_infra.vpc_id}"
+}
+
+output "private_subnets" {
+  value = "${module.network_infra.private_subnets}"
+}
+
+output "public_subnets" {
+  value = "${module.network_infra.public_subnets}"
+}

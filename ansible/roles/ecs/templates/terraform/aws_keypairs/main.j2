@@ -1,0 +1,21 @@
+terraform {
+  backend "s3" {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_keypairs/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_keypairs/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "automation-key"
+  public_key = "${file("${var.vagrant_pub_key_path}")}"
+}

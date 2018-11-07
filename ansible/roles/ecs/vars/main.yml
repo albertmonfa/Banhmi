@@ -1,0 +1,29 @@
+---
+
+terraform_url: https://releases.hashicorp.com/terraform/0.11.10/
+terraform_zip_file: terraform_0.11.10_linux_amd64.zip
+
+theapp_name: banhmi
+theapp_build_docker_tag: latest
+theapp_build_docker_context: ../
+theapp_build_dockerfile: docker/banhmi/Dockerfile
+
+ecr_repository: "zalora/banhmi"
+s3_bucket_terraform_state: z-tfstates
+s3_bucket_terraform_state_region: us-east-1
+s3_bucket_banhmi: net.telenix.zalora
+vagrant_pub_key_path: /home/vagrant/.ssh/id_rsa.pub
+
+vpc_tag_name: production
+vpc_azs: [ "us-east-1a", "us-east-1b", "us-east-1c" ]
+vpc_cidr: "10.1.0.0/16"
+vpc_public_subnets: [ "10.1.1.0/22", "10.1.4.0/22", "10.1.8.0/22" ]
+vpc_private_subnets: [ "10.1.28.0/22", "10.1.32.0/22", "10.1.36.0/22" ]
+vpc_database_subnets: [ "10.1.48.0/22", "10.1.52.0/22", "10.1.56.0/22" ]
+vpc_elasticache_subnets: [ "10.1.60.0/22", "10.1.64.0/22", "10.1.68.0/22" ]
+
+bastion_name: bastion
+bastion_port: 22
+bastion_user: ec2-user
+
+...

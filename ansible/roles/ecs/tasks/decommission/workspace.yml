@@ -1,0 +1,36 @@
+---
+
+- stat: path=/terraform
+  register: workspace_stat
+  tags:
+     - role_ecs_workspace
+
+- name: Deleting ECS Vagrant Workspace
+  file:
+    path: /terraform
+    state: absent
+  when: workspace_stat.stat.exists == True
+  tags:
+     - role_ecs_workspace
+
+# Disabled by security reason
+- name: Delete S3 Bucket for Banhmi Application
+  s3_bucket:
+    name: "{{ s3_bucket_banhmi }}"
+    state: absent
+    force: yes
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_workspace
+
+# Disabled by security reason
+#- name: Delete S3 Bucket for the Terraform States
+#  s3_bucket:
+#    name: z-tfstates
+#    state: absent
+#    force: yes
+#  environment: "{{ aws_credentials }}"
+#  tags:
+#    - role_ecs_workspace
+
+...

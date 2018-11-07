@@ -1,0 +1,9 @@
+---
+
+- include: "{{ ecs_test_item }}"
+  with_items:
+    - ./test/test_banhmi.yml
+  loop_control:
+    loop_var: ecs_test_item
+
+...

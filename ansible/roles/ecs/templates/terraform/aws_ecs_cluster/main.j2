@@ -1,0 +1,79 @@
+terraform {
+  backend "s3" {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_ecs_cluster/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_ecs_cluster/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+module "some-ecs-alb-sg"   {
+  source = "../../modules/primitives/sg"
+
+  sg_name = "${var.name}_ecs_alb_sg_${var.env}"
+  sg_description = "Used to allow connections from the ALB to the ECS Cluster"
+  vpc_id = "${var.vpc_id}"
+
+  inbound_rules = {
+    "0" = [ "0.0.0.0/0", "80", "80", "TCP" ]
+    "1" = [ "0.0.0.0/0", "443", "443", "TCP" ]
+    "2" = [ "10.0.0.0/8", "0", "0", "-1" ]
+    "3" = [ "0.0.0.0/0", "32768", "65535", "TCP" ]
+  }
+  outbound_rules = {
+    "0" = [ "0.0.0.0/0", "0", "0", "-1" ]
+  }
+
+  tags {
+     "Z_itops_automation" = "yes"
+  }
+}
+
+module "some-iam"   {
+  source = "../../modules/ecs-iam-roles"
+  prefix-name                 = "${var.name}-${var.env}"
+}
+
+module "some-ecs-cluster"   {
+  source = "../../modules/ecs-cluster"
+
+  ecs_cluster_name            = "${var.name}-cluster-${var.env}"
+  ecs_cluster_sns_topic_name  = "${var.name}-cluster-sns-${var.env}"
+  sns_lambda_iam_role         = "${module.some-iam.role-sns-lambda}"
+  lambda_iam_role             = "${module.some-iam.role-ecs-lambda}"
+
+  lc_name                     = "${var.name}-cluster-lc-${var.env}"
+  lc_ami                      = "${var.ami}"
+  lc_instance_type            = "${var.ec2-type}"
+  lc_security_groups          = ["${module.some-ecs-alb-sg.id}"]
+  lc_key_name                 = "${var.automation-key}"
+  lc_iam_instance_profile     = "${module.some-iam.ecs-instance-profile}"
+
+  lc_root_vol_size            = "${var.lc_root_vol_size}"
+
+  asg_name                    = "${var.name}-cluster-asg-${var.env}"
+  asg_subnets                 = "${var.subnets}"
+  asg_default_cooldown        = 30
+  asg_desired_capacity        = 1
+  asg_min_size                = 1
+  asg_max_size                = 4
+  asg_force_delete            = true
+  asg_hc_grace_period         = 60
+
+  asg_pol_scale_up_scaling_adjustment    = 1
+  asg_pol_scale_down_scaling_adjustment  = -1
+
+  cloudwatch_metric_alarm_ec2_cpu_high_threshold     = 70
+  cloudwatch_metric_alarm_ec2_cpu_low_threshold      = 35
+
+  cloudwatch_metric_alarm_ec2_memory_high_threshold  = 85
+  cloudwatch_metric_alarm_ec2_memory_low_threshold   = 55
+}

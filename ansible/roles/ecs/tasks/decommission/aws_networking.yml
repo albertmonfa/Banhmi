@@ -1,0 +1,29 @@
+---
+
+- name: "Decommission AWS networking"
+  terraform:
+    force_init: yes
+    project_path: /terraform/projects/aws_networking
+    variables_file: variables.tfvars
+    state: absent
+  environment: "{{ aws_credentials }}"
+  register: outs_aws_networking
+  tags:
+     - role_ecs_terraform_networking
+     - role_ecs_apply_terraform
+
+- stat: path=/vagrant/workspace/ansible/aws_networking.yml
+  register: aws_networking_file_stat
+  tags:
+     - role_ecs_terraform_networking
+     - role_ecs_apply_terraform
+
+- name: Deleting status in the Vagrant Workspace
+  file:
+    path: /vagrant/workspace/ansible/aws_networking.yml
+    state: absent
+  when: aws_networking_file_stat.stat.exists == True
+  tags:
+     - role_ecs_terraform_networking
+     - role_ecs_apply_terraform
+...

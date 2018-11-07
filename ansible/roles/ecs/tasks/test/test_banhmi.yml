@@ -1,0 +1,58 @@
+---
+
+- include_vars: /vagrant/workspace/ansible/aws_bastion.yml
+  ignore_errors: yes
+
+- include_vars: /vagrant/workspace/ansible/aws_ecs_service.yml
+  ignore_errors: yes
+
+- name: "Wait until the ECS Task will be deployed"
+  uri:
+    url: "http://{{ ecs_service_alb_dns }}/status/healthcheck"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 300
+  delay: 1
+
+- name: Add Repositories for python 3.6
+  shell: "yum -y install https://centos7.iuscommunity.org/ius-release.rpm"
+  args:
+    executable: /bin/bash
+  become: yes
+  ignore_errors: yes
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_banhmi_test
+
+- name: Installing Python 3.6
+  shell: "yum -y install python36u python36u-devel python36u-pip"
+  args:
+    executable: /bin/bash
+  become: yes
+  ignore_errors: yes
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_banhmi_test
+
+- name: Installing Requeriments for Banhmi
+  shell: "pip3.6 install -r /vagrant/docker/banhmi/conf/requirements.txt"
+  args:
+    executable: /bin/bash
+  become: yes
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_banhmi_test
+
+- name: Testing Banhmi Banhmi
+  shell: "python3.6 /vagrant/src/examples/client-integration-example.py"
+  args:
+    executable: /bin/bash
+  become: no
+  environment:
+    BANHMI_TEST_BUCKET: "{{ s3_bucket_banhmi }}"
+    BANHMI_URL_BASE: "http://{{ ecs_service_alb_dns }}"
+  tags:
+    - role_ecs_banhmi_test
+
+...

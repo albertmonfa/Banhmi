@@ -1,0 +1,14 @@
+---
+
+ - name: Provisioning Common Packages for Vagrant role
+   package:
+     name: "{{ vagrant_pkg_item }}"
+     state: latest
+     update_cache: yes
+   become: yes
+   with_items:
+     - siege
+   loop_control:
+     loop_var: vagrant_pkg_item
+
+...

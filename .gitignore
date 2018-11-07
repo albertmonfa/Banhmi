@@ -1,0 +1,8 @@
+__pycache__
+*.pyc
+*.terraform
+*.retry
+.vagrant
+*.tfstate
+*.tfstate.backup
+workspace/ansible

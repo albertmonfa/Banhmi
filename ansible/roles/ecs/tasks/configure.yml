@@ -1,0 +1,9 @@
+---
+
+- include: "{{ ecs_configure_item }}"
+  with_items:
+    - ./configure/bastion.yml
+  loop_control:
+    loop_var: ecs_configure_item
+
+...

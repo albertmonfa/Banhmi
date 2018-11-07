@@ -1,0 +1,26 @@
+---
+
+- name: Delete the ECR Repository
+  shell: "/usr/bin/aws ecr delete-repository --force --repository-name {{ ecr_repository }}"
+  environment: "{{ aws_credentials }}"
+  args:
+    executable: /bin/bash
+  tags:
+    - role_ecs_ecr
+
+- stat: path=/vagrant/workspace/ansible/aws_ecr.yml
+  register: aws_ecr_file_stat
+  tags:
+     - role_ecs_terraform_ecr
+     - role_ecs_apply_terraform
+
+- name: Deleting status in the Vagrant Workspace
+  file:
+    path: /vagrant/workspace/ansible/aws_ecr.yml
+    state: absent
+  when: aws_ecr_file_stat.stat.exists == True
+  tags:
+     - role_ecs_terraform_ecr
+     - role_ecs_apply_terraform
+
+...

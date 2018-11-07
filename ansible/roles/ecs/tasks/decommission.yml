@@ -1,0 +1,15 @@
+---
+
+- include: "{{ ecs_decommission_item }}"
+  with_items:
+    - ./decommission/aws_ecs_service.yml
+    - ./decommission/aws_ecs_cluster.yml
+    - ./decommission/aws_bastion.yml
+    - ./decommission/aws_networking.yml
+    - ./decommission/aws_keypairs.yml
+    - ./decommission/aws_ecr.yml
+    - ./decommission/workspace.yml
+  loop_control:
+    loop_var: ecs_decommission_item
+
+...

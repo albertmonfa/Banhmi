@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  banhmi:
+    container_name: banhmi
+    build:
+      context: ../
+      dockerfile: docker/banhmi/Dockerfile
+    environment:
+      - ENV=dev
+      - RUN_TESTS=Yes
+      - AWS_ACCESS_KEY_ID=foobar
+      - AWS_SECRET_ACCESS_KEY=foobar
+      - AWS_DEFAULT_REGION=us-east-1
+    ports:
+      - "8080:8080"
+    networks:
+      - net_banhmi
+    depends_on:
+      - localstack
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - "5000:5000"
+    networks:
+      - net_banhmi
+    environment:
+      - SERVICES=s3:5000
+      - DEFAULT_REGION=us-east-1
+      - FORCE_NONINTERACTIVE=true
+
+networks:
+  net_banhmi:
+    driver: bridge

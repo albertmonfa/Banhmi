@@ -1,0 +1,35 @@
+variable "name" {
+  description = "Name prefix of the stack"
+}
+
+variable "cidr" {
+  description = "The CIDR block for the VPC"
+  default     = "10.1.0.0/16"
+}
+
+variable "public_subnets" {
+  description = "A list of public subnets inside the VPC."
+  default     = [ "10.1.1.0/22", "10.1.4.0/22", "10.1.8.0/22" ]
+}
+
+variable "private_subnets" {
+  description = "A list of private subnets inside the VPC."
+  default     = [ "10.1.28.0/22", "10.1.32.0/22", "10.1.36.0/22" ]
+}
+
+variable "database_subnets" {
+  type        = "list"
+  description = "A list of database subnets"
+  default     = [ "10.1.48.0/22", "10.1.52.0/22", "10.1.56.0/22" ]
+}
+
+variable "elasticache_subnets" {
+  type        = "list"
+  description = "A list of elasticache subnets"
+  default     = [ "10.1.60.0/22", "10.1.64.0/22", "10.1.68.0/22" ]
+}
+
+variable "azs" {
+  description = "A list of Availability zones in the region"
+  default     = [ "us-east-1a", "us-east-1b", "us-east-1c" ]
+}

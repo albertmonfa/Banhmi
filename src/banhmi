@@ -1,0 +1,63 @@
+#!/usr/bin/python
+'''
+Copyright 2018 Albert Monfa
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'''
+
+import asyncio
+import signal
+import sys
+
+from core.base.Bootstrap import Bootstrap
+from core.base.GlobalRegistry import GlobalRegistry
+
+EVENT_LOOP_ERROR = 'Waring!, Error stopping the application, the eventloop \
+ could be still running {}'
+
+class Shutdown(Exception):
+    def __init__(self):
+        super(Shutdown, self).__init__()
+
+def signal_term_handler(signal, frame):
+    raise Shutdown
+
+def banhmi_server(bootstrap):
+    bootstrap.init_cli()
+    bootstrap.init_config()
+    bootstrap.init_logging_system()
+    return bootstrap.banhmin_server()
+
+if __name__ == '__main__':
+    GR = GlobalRegistry()
+    bootstrap = Bootstrap()
+    http_server = banhmi_server(bootstrap)
+    try:
+        signal.signal(signal.SIGTERM, signal_term_handler)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(http_server.start())
+        loop.run_forever()
+    except KeyboardInterrupt:
+        loop.run_until_complete(http_server.shutdown())
+        pass
+    except Shutdown:
+        loop.run_until_complete(http_server.shutdown())
+        pass
+    except Exception as e:
+        pass
+    finally:
+        try:
+            http_server.get_event_loop().close()
+        except Exception as e:
+            print(str(EVENT_LOOP_ERROR).format(e))
+            sys.exit(-1)

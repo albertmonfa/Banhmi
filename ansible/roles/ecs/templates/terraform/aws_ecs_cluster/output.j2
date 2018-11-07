@@ -1,0 +1,19 @@
+output "cluster_name" {
+  value = "${var.name}-cluster-${var.env}"
+}
+
+output "sg_ecs" {
+  value = "${module.some-ecs-alb-sg.id}"
+}
+
+output "role_ecs_service" {
+  value = "${module.some-iam.role-ecs-service}"
+}
+
+output "role_ecs_service_autoscale" {
+  value = "${module.some-iam.role-ecs-service-autoscale}"
+}
+
+output "task_role_arn" {
+  value = "${module.some-iam.task_role_arn}"
+}

@@ -1,0 +1,9 @@
+name = "{{ theapp_name }}"
+env = "prd"
+cluster_name = "{{ ecs_cluster_name }}"
+ecs_service_role = "{{ ecs_cluster_role_service }}"
+ecs_service_autoscale = "{{ ecs_cluster_role_autoscale }}"
+task_role_arn = "{{ ecs_cluster_role_task_arn }}"
+alb_subnets = ["{{ vpc_public_subnets_ids | list | join("\", \"") }}"]
+alb_sg = "{{ ecs_cluster_security_group }}"
+tg_vpc_id = "{{ vpc_id }}"

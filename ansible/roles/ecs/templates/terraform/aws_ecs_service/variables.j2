@@ -1,0 +1,38 @@
+variable "name" {
+  description = "Name prefix of the ECS service"
+  default = "theapp"
+}
+
+variable "env" {
+  description = "Enviroment Name of the ECS Service"
+  default = "prd"
+}
+
+variable "cluster_name" {
+  description = "Name of the ECS Cluster"
+}
+
+variable "alb_subnets" {
+  description = "A list of public subnets in the same VPC of the ASG EC2 instances"
+  type = "list"
+}
+
+variable "alb_sg" {
+  description = "The ALB SecurityGroup"
+}
+
+variable "tg_vpc_id" {
+  description = "The vpc_ip of the Target Group"
+}
+
+variable "ecs_service_role" {
+  description = "IAM Role for ECS Services"
+}
+
+variable "ecs_service_autoscale" {
+  description = "IAM Role for ECS Services for autoscaling"
+}
+
+variable "task_role_arn" {
+  description = "IAM Role for TheApp TaskDefinition"
+}

@@ -1,0 +1,38 @@
+variable "name" {
+  description = "Name prefix of the stack"
+  default = "apis"
+}
+
+variable "env" {
+  description = "Enviroment Name"
+  default = "prd"
+}
+
+variable "vpc_id" {
+  description = "The CIDR block for the VPC"
+}
+
+variable "subnets" {
+  description = "A list of private subnets for the ASG"
+  type = "list"
+}
+
+variable "automation-key" {
+  description = "Used in the launch configuration"
+  default     = "automation-key"
+}
+
+variable "ami" {
+  description = "Optimized ECS AMI, us-east-1"
+  default     = "ami-07eb698ce660402d2"
+}
+
+variable "ec2-type" {
+  description = "EC2 Instance Type"
+  default     = "t2.micro"
+}
+
+variable "lc_root_vol_size" {
+  description = "Size of the root E"
+  default     = "8"
+}

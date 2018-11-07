@@ -1,0 +1,32 @@
+terraform {
+  backend "s3" {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_bastion/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_bastion/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+resource "aws_instance" "bastion" {
+  ami                         = "${var.ami_bastion}"
+  instance_type               = "t2.micro"
+  key_name                    = "automation-key"
+  associate_public_ip_address = true
+  subnet_id                   = "${var.subnet_bastion}"
+
+  root_block_device = {
+    volume_size = 8
+  }
+
+  tags {
+    Name = "Bastion"
+  }
+}

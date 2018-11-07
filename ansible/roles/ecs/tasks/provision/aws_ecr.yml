@@ -1,0 +1,52 @@
+---
+
+- name: "Build {{ theapp_name }} backend Docker Image"
+  docker_image:
+    path: "{{ theapp_build_docker_context }}"
+    dockerfile: "{{ theapp_build_dockerfile }}"
+    name: "{{ theapp_name }}"
+  tags:
+    - role_ecs_ecr
+
+- name: "Create the ECR Repository for {{ theapp_name }}"
+  ecs_ecr:
+    name: "{{ ecr_repository }}"
+    state: present
+  environment: "{{ aws_credentials }}"
+  register: outs_ecr_repository
+  tags:
+    - role_ecs_ecr
+    - theapp_ecr_repository
+
+- name: Docker Login AWS ECR
+  shell: "$(/usr/bin/aws ecr get-login --no-include-email)"
+  environment: "{{ aws_credentials }}"
+  args:
+    executable: /bin/bash
+  tags:
+    - role_ecs_ecr
+
+- name: "Adding ECR tag for {{ theapp_name }} docker Image"
+  docker_image:
+    name: "{{ theapp_name }}:{{ theapp_build_docker_tag }}"
+    repository: "{{ outs_ecr_repository.repository.repositoryUri }}"
+    tag: "{{ outs_ecr_repository.repository.repositoryUri }}:{{ theapp_build_docker_tag }}"
+  tags:
+    - role_ecs_ecr
+
+- name: "Push {{ theapp_name }} Docker Image to AWS ECR"
+  docker_image:
+    name: "{{ outs_ecr_repository.repository.repositoryUri }}:{{ theapp_build_docker_tag }}"
+    push: yes
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_ecr
+
+- name: Saving status in the Vagrant Workspace
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/varfiles/aws_ecr.j2
+    dest: /vagrant/workspace/ansible/aws_ecr.yml
+  tags:
+    - role_ecs_ecr
+
+...

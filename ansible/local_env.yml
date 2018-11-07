@@ -1,0 +1,11 @@
+- hosts: localhost
+  become: yes
+  gather_facts: yes
+  connection: paramiko
+
+  roles:
+    - {"role": common, "role_action": "provision"}
+    - {"role": common, "role_action": "configure"}
+    - {"role": docker, "role_action": "provision"}
+    - {"role": vagrant, "role_action": "provision"}
+    - {"role": vagrant, "role_action": "configure"}    

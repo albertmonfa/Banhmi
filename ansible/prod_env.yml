@@ -1,0 +1,21 @@
+- hosts: localhost
+  become: yes
+  gather_facts: yes
+  connection: paramiko
+
+  vars:
+    aws_credentials:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: FOO
+      AWS_SECRET_ACCESS_KEY: BAR
+
+  roles:
+    - {"role": common, "role_action": "provision"}
+    - {"role": common, "role_action": "configure"}
+    - {"role": docker, "role_action": "provision"}
+    - {"role": vagrant, "role_action": "provision"}
+    - {"role": vagrant, "role_action": "configure"}
+    - {"role": ecs, "role_action": "provision"}
+    - {"role": ecs, "role_action": "configure"}
+    - {"role": ecs, "role_action": "test"}
+    - {"role": ecs, "role_action": "decommission"}

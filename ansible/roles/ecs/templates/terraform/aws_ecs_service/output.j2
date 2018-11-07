@@ -1,0 +1,7 @@
+output "alb_dns_name" {
+  value = "${module.some-ecs-service.alb_dns_name}"
+}
+
+output "ecs_service_name" {
+  value = "${module.some-ecs-service.ecs_service}"
+}

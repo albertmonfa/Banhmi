@@ -1,0 +1,30 @@
+---
+
+- name: "Decommission AWS ecs_cluster"
+  terraform:
+    force_init: yes
+    project_path: /terraform/projects/aws_ecs_cluster
+    variables_file: variables.tfvars
+    state: absent
+  environment: "{{ aws_credentials }}"
+  register: outs_aws_ecs_cluster
+  tags:
+     - role_ecs_terraform_ecs_cluster
+     - role_ecs_apply_terraform
+
+- stat: path=/vagrant/workspace/ansible/aws_ecs_cluster.yml
+  register: aws_ecs_cluster_file_stat
+  tags:
+     - role_ecs_terraform_ecs_cluster
+     - role_ecs_apply_terraform
+
+- name: Deleting status in the Vagrant Workspace
+  file:
+    path: /vagrant/workspace/ansible/aws_ecs_cluster.yml
+    state: absent
+  when: aws_ecs_cluster_file_stat.stat.exists == True
+  tags:
+     - role_ecs_terraform_ecs_cluster
+     - role_ecs_apply_terraform
+
+...

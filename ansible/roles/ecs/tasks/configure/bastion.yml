@@ -1,0 +1,37 @@
+---
+
+- include_vars: /vagrant/workspace/ansible/aws_bastion.yml
+  ignore_errors: yes
+
+- name: "Add {{ bastion_host }} to the Ansible Inventory"
+  add_host:
+    hostname: "{{ bastion_name }}"
+    ansible_host: "{{ bastion_ip }}"
+    ansible_port: "{{ bastion_port }}"
+    ansible_user: "{{ bastion_user }}"
+    ansible_ssh_private_key_file: "/home/vagrant/.ssh/id_rsa"
+  tags:
+    - role_ecs_bastion
+
+- name: Write the new ec2 instance host key to known hosts
+  connection: local
+  shell: "ssh-keyscan -H {{ bastion_ip }} >> /home/vagrant/.ssh/known_hosts"
+  become: yes
+  become_user: vagrant
+  tags:
+    - role_ecs_bastion
+
+- name: Provisioning Essential packages
+  package:
+    name: "{{ essential_pkg_item }}"
+    state: latest
+    update_cache: yes
+  become: yes
+  delegate_to: "{{ bastion_name }}"
+  with_items:
+    - yum-utils
+    - aws-cli
+  loop_control:
+    loop_var: essential_pkg_item
+
+...

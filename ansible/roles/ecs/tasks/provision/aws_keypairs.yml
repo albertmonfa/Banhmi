@@ -1,0 +1,39 @@
+---
+
+- name: Generating main.tf for aws_keypairs
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_keypairs/main.j2
+    dest: /terraform/projects/aws_keypairs/main.tf
+  tags:
+    - role_ecs_keypairs
+    - role_ecs_generate_tfs
+
+- name: Generating variables.tf for aws_keypairs
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_keypairs/variables.j2
+    dest: /terraform/projects/aws_keypairs/variables.tf
+  tags:
+    - role_ecs_keypairs
+    - role_ecs_generate_tfs
+
+- name: Generating variables.tfvars for aws_keypairs
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_keypairs/variables.tfvars.j2
+    dest: /terraform/projects/aws_keypairs/variables.tfvars
+  tags:
+    - role_ecs_keypairs
+    - role_ecs_generate_tfs
+
+- name: "Provision AWS KeyPairs"
+  terraform:
+    force_init: yes
+    project_path: /terraform/projects/aws_keypairs
+    variables_file: variables.tfvars
+    state: present
+  environment: "{{ aws_credentials }}"
+  register: outs_aws_keypairs
+  tags:
+     - role_ecs_terraform_keypairs
+     - role_ecs_apply_terraform
+
+...

@@ -1,0 +1,35 @@
+---
+
+- include: "{{ ecs_provision_item }}"
+  with_items:
+    - ./provision/workspace.yml
+    - ./provision/aws_ecr.yml
+    - ./provision/aws_keypairs.yml
+  loop_control:
+    loop_var: ecs_provision_item
+
+- stat: path=/vagrant/workspace/ansible/aws_networking.yml
+  register: aws_networking_file_stat
+
+- include: ./provision/aws_networking.yml
+  when: aws_networking_file_stat.stat.exists == False
+
+- stat: path=/vagrant/workspace/ansible/aws_bastion.yml
+  register: aws_bastion_file_stat
+
+- include: ./provision/aws_bastion.yml
+  when: aws_bastion_file_stat.stat.exists == False
+
+- stat: path=/vagrant/workspace/ansible/aws_ecs_cluster.yml
+  register: aws_ecs_cluster_file_stat
+
+- include: ./provision/aws_ecs_cluster.yml
+  when: aws_ecs_cluster_file_stat.stat.exists == False
+
+- stat: path=/vagrant/workspace/ansible/aws_ecs_service.yml
+  register: aws_ecs_service_file_stat
+
+- include: ./provision/aws_ecs_service.yml
+  when: aws_ecs_service_file_stat.stat.exists == False
+
+...

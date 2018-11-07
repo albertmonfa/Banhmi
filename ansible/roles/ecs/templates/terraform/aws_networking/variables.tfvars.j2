@@ -1,0 +1,7 @@
+name = "{{ vpc_tag_name }}"
+azs = ["{{ vpc_azs | list | join("\", \"") }}"]
+cidr = "{{ vpc_cidr }}"
+public_subnets = ["{{ vpc_public_subnets | list | join("\", \"") }}"]
+private_subnets = ["{{ vpc_private_subnets | list | join("\", \"") }}"]
+database_subnets = ["{{ vpc_database_subnets | list | join("\", \"") }}"]
+elasticache_subnets = ["{{ vpc_elasticache_subnets | list | join("\", \"") }}"]

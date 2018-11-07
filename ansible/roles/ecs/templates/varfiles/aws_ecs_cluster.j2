@@ -1,0 +1,5 @@
+ecs_cluster_name: "{{ outs_aws_ecs_cluster.outputs.cluster_name.value }}"
+ecs_cluster_security_group: "{{ outs_aws_ecs_cluster.outputs.sg_ecs.value }}"
+ecs_cluster_role_service: "{{ outs_aws_ecs_cluster.outputs.role_ecs_service.value }}"
+ecs_cluster_role_autoscale: "{{ outs_aws_ecs_cluster.outputs.role_ecs_service_autoscale.value }}"
+ecs_cluster_role_task_arn: "{{ outs_aws_ecs_cluster.outputs.task_role_arn.value }}"

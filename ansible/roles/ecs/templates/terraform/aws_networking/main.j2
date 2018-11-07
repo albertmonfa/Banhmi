@@ -1,0 +1,40 @@
+terraform {
+  backend "s3" {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_networking/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "{{ s3_bucket_terraform_state }}"
+    key    = "aws_networking/terraform.tfstate"
+    region = "{{ s3_bucket_terraform_state_region }}"
+  }
+}
+
+module "network_infra"   {
+  source = "../../modules/primitives/vpc"
+
+  name                 = "${var.name}"
+  azs                  = "${var.azs}"
+
+  enable_dns_hostnames    = true
+  enable_dns_support      = true
+  enable_nat_gateway      = true
+  single_nat_gateway      = true
+  enable_s3_endpoint      = true
+  map_public_ip_on_launch = false
+
+  cidr                    = "${var.cidr}"
+  public_subnets          = "${var.public_subnets}"
+  private_subnets         = "${var.private_subnets}"
+  database_subnets        = "${var.database_subnets}"
+  elasticache_subnets     = "${var.elasticache_subnets}"
+
+  tags = {
+    "Z_env" = "production"
+  }
+}

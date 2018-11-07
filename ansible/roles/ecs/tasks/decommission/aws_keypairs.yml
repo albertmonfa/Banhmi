@@ -1,0 +1,28 @@
+---
+- name: "Decommission AWS keypairs"
+  terraform:
+    force_init: yes
+    project_path: /terraform/projects/aws_keypairs
+    variables_file: variables.tfvars
+    state: absent
+  environment: "{{ aws_credentials }}"
+  register: outs_aws_keypairs
+  tags:
+     - role_ecs_terraform_keypairs
+     - role_ecs_apply_terraform
+
+- stat: path=/vagrant/workspace/ansible/aws_keypairs.yml
+  register: aws_keypairs_file_stat
+  tags:
+     - role_ecs_terraform_keypairs
+     - role_ecs_apply_terraform
+
+- name: Deleting status in the Vagrant Workspace
+  file:
+    path: /vagrant/workspace/ansible/aws_keypairs.yml
+    state: absent
+  when: aws_keypairs_file_stat.stat.exists == True
+  tags:
+     - role_ecs_terraform_keypairs
+     - role_ecs_apply_terraform
+...

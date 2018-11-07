@@ -1,0 +1,25 @@
+[
+  {
+    "volumesFrom": [],
+    "portMappings": [
+      {
+        "hostPort": 0,
+        "containerPort": 8080,
+        "protocol": "tcp"
+      }
+    ],
+    "environment": [
+              {
+                      "name": "ENV",
+                      "value": "prod"
+              }
+    ],
+    "essential": true,
+    "mountPoints": [],
+    "name": "banhmi",
+    "image": "{{ theapp_ecr_image }}",
+    "cpu": 0,
+    "memoryReservation": 128,
+    "taskRoleArn": "{{ ecs_cluster_role_task_arn }}"
+  }
+]

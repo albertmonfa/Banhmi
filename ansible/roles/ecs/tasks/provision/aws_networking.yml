@@ -1,0 +1,55 @@
+---
+
+- name: Generating main.tf for aws_networking
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_networking/main.j2
+    dest: /terraform/projects/aws_networking/main.tf
+  tags:
+    - role_ecs_networking
+    - role_ecs_generate_tfs
+
+- name: Generating output.tf for aws_networking
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_networking/output.j2
+    dest: /terraform/projects/aws_networking/output.tf
+  tags:
+    - role_ecs_networking
+    - role_ecs_generate_tfs
+
+- name: Generating variables.tf for aws_networking
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_networking/variables.j2
+    dest: /terraform/projects/aws_networking/variables.tf
+  tags:
+    - role_ecs_networking
+    - role_ecs_generate_tfs
+
+- name: Generating variables.tfvars for aws_networking
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/terraform/aws_networking/variables.tfvars.j2
+    dest: /terraform/projects/aws_networking/variables.tfvars
+  tags:
+    - role_ecs_networking
+    - role_ecs_generate_tfs
+
+- name: "Provision AWS networking"
+  terraform:
+    force_init: yes
+    project_path: /terraform/projects/aws_networking
+    variables_file: variables.tfvars
+    state: present
+  environment: "{{ aws_credentials }}"
+  register: outs_aws_networking
+  tags:
+     - role_ecs_terraform_networking
+     - role_ecs_apply_terraform
+
+- name: Saving status in the Vagrant Workspace
+  template:
+    src: /vagrant/ansible/roles/ecs/./templates/varfiles/aws_networking.j2
+    dest: /vagrant/workspace/ansible/aws_networking.yml
+  tags:
+    - role_ecs_terraform_networking
+    - role_ecs_apply_terraform
+
+...

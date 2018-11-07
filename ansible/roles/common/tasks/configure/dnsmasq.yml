@@ -1,0 +1,11 @@
+---
+
+- name: Enable service DNSMASQ Service and ensure it is not masked
+  systemd:
+    name: dnsmasq
+    enabled: yes
+    masked: no
+    state: started
+  tags: role_common_provision
+
+...

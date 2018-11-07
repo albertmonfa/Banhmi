@@ -1,0 +1,25 @@
+---
+
+global:
+    aws_region: 'us-east-1'
+    log_level: 3
+    s3_endpoint_url: 'https://s3.us-east-1.amazonaws.com'
+
+server:
+    host: '0.0.0.0'
+    port: 8080
+    chunk_size: 128000
+    debug: true
+    tcp_keepalive: true
+    shutdown_timeout: '1.0'
+    backlog: 128
+    reuse_address: true
+    reuse_port: true
+    keepalive_timeout: 30
+    max_line_size: 8190
+    max_headers: 32768
+    max_field_size: 8190
+    lingering_time: 0
+    client_max_size: 104857600
+
+...

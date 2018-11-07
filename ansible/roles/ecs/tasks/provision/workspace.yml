@@ -1,0 +1,79 @@
+---
+
+# To fix this problem https://github.com/hashicorp/terraform/issues/14974
+# with terraform and the VBox Shared Folders
+- name: Deploy a copy of terraform folder into the Vagrant Machine as workspace
+  shell: "cp -rf /vagrant/terraform /"
+  args:
+    chdir: /
+    executable: /bin/bash
+  tags:
+    - role_ecs_workspace
+
+- block:
+  - stat:
+      path: "{{ directory_status }}"
+    register: folder_stats
+    loop_control:
+      loop_var: directory_status
+    with_items:
+    - [ "/vagrant/workspace/ansible",
+        "/terraform/projects",
+        "/terraform/projects/aws_keypairs",
+        "/terraform/projects/aws_networking",
+        "/terraform/projects/aws_bastion",
+        "/terraform/projects/aws_ecs_cluster",
+        "/terraform/projects/aws_ecs_service"
+      ]
+
+  - name: "Creating Terraform projects directory tree and Ansible varfiles"
+    file:
+     path: "{{ directory_path.directory_status }}"
+     state: directory
+     mode: 0755
+     group: root
+     owner: root
+    when: directory_path.stat.exists == false
+    loop_control:
+      loop_var: directory_path
+    with_items:
+    - "{{ folder_stats.results }}"
+  tags:
+    - role_ecs_workspace
+
+- name: Download HashiCorp Terraform
+  shell: "wget {{ terraform_url }}{{ terraform_zip_file }}"
+  args:
+    chdir: /tmp/
+    executable: /bin/bash
+  tags:
+    - role_ecs_workspace
+
+- name: Unzip HashiCorp Terraform
+  shell: "unzip -o /tmp/{{ terraform_zip_file }} -d /bin/"
+  args:
+    chdir: /
+    executable: /bin/bash
+  ignore_errors: no
+  tags:
+    - role_ecs_workspace
+
+- name: Creating S3 Bucket for the Terraform States
+  s3_bucket:
+    name: "{{ s3_bucket_terraform_state }}"
+    state: present
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_workspace
+    - create_tfstates_bucket
+
+- name: Creating S3 Bucket for Banhmi App testing
+  s3_bucket:
+    name: "{{ s3_bucket_banhmi }}"
+    state: present
+  environment: "{{ aws_credentials }}"
+  tags:
+    - role_ecs_workspace
+    - create_banhmi_bucket
+
+...
