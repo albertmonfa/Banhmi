@@ -6,7 +6,7 @@ comments are welcome and really appreciate, However you can use this approach
 as real production-ready environments base for.
 
 ## The Challenge, The Roots
-The details of the challenge are in this repository [here](https://github.com/albertmonfa/Banhmi).
+The details of the challenge are in this repository [here](https://github.com/albertmonfa/Banhmi/blob/master/assigment/DevOps%20-%20Coding%20test.pdf).
 
 ## Requeriments
 * [**VirtualBox** >= 5.2.10](https://www.virtualbox.org/)
@@ -102,7 +102,7 @@ with the following components:
 The main-goals that I liked achieve to using that approach has been:
 * **Automation**: I used Ansible for everything in the Vagrant side moreover
 Terraform for AWS.
-* **Best-practice in Docker **: Small image size, single responsability, fast bootstrap...
+* **Best-practice in Docker**: Small image size, single responsability, fast bootstrap...
 Docker is first of all a package system to delivery our applications, likewise docker
 is very flexible and sometimes is not used in the correct way, I put all my bests
 to ensure some best practice designing Dockers like:
@@ -114,7 +114,6 @@ to ensure some best practice designing Dockers like:
   - Unix signals handled by default by the app to prevent the zombies processes.
 * **AutoHealing**: ECS bring us some strategies to keep our dockers up and running
 permanetly.
-* **AutoHealing**: ECS bring us some strategies to keep our dockers up and running.
 * **Scaling UP/DOWN**: Instant service autoscaling and pretty fast ASG autoscaling.
 * **Rolling deployments**: To prevent downtimes using in-app health checks as watchdog.
 
@@ -158,7 +157,7 @@ conf  Vagrantfile
 ```
 Please read the next section, before execute anything.
 
-## A rubber ring for the busy test-reviewer:
+## A rubber ring for the busy test-reviewer
 I know, this is probably one more of dozens of TechTests that you should to review
 during a short period of time. However the whole of the approaches can be executed as
 Vagrant VM in a easy way just typing:
@@ -177,26 +176,27 @@ easily as a movie. :-)
 For each "demo" you can found inside the subfolder called `demo` something
 like it's showed below:
 
-  ```
-  ╭─amonfa@emc2 ~/Development/Personal/TechTests/Zalora/Banhmi  ‹master*›
+```
+╭─amonfa@emc2 ~/Development/Personal/TechTests/Zalora/Banhmi  ‹master*›
 ╰─$ ls -lR demo
 demo:
 total 8
-drwxr-xr-x 2 amonfa amonfa 4096 nov  7 22:11 dev_env
-drwxr-xr-x 2 amonfa amonfa 4096 nov  7 22:11 prod_env
+drwxr-xr-x 2 amonfa amonfa 4096 nov  7 22:11 env_dev
+drwxr-xr-x 2 amonfa amonfa 4096 nov  7 22:11 env_prod
 
-demo/dev_env:
+demo/env_dev:
 total 464
 -rw-rw-r-- 1 amonfa amonfa 423124 nov  7 22:00 log_f
 -rw-rw-r-- 1 amonfa amonfa  38759 nov  7 22:00 timing_f
 
-demo/prod_env:
+demo/env_prod:
 total 1584
 -rw-rw-r-- 1 amonfa amonfa 1533247 nov  7 22:55 log_f
 -rw-rw-r-- 1 amonfa amonfa   76071 nov  7 22:55 timing_f
 ╭─amonfa@emc2 ~/Development/Personal/TechTests/Zalora/Banhmi  ‹master*›
+╰─$
+```
 
-  ```
 These couple of files are the output of the script-scriptreplay execution
 you can find more information about script in: [util-linux](https://github.com/karelzak/util-linux/tree/master/term-utils)
 
